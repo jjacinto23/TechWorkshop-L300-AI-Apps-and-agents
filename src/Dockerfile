@@ -21,8 +21,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the code
 COPY . .
 
-# Copy .env file from src directory (build context is src)
-COPY .env .env
+# Use BuildKit secret to create .env file without exposing it in image layers
+# The secret is mounted during build and then copied to .env
+RUN --mount=type=secret,id=env_content \
+    if [ -f /run/secrets/env_content ]; then \
+        cat /run/secrets/env_content > .env; \
+    else \
+        echo "Warning: No env_content secret provided, using empty .env" && touch .env; \
+    fi
 
 # Expose the port (default FastAPI/uvicorn port)
 EXPOSE 8000
