@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the code
 COPY . .
 
-# Copy .env file into the image (for python-dotenv)
+# Copy .env file from src directory (build context is src)
 COPY .env .env
 
 # Expose the port (default FastAPI/uvicorn port)
